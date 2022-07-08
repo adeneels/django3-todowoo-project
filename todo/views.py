@@ -100,6 +100,7 @@ def deletetodo(request, todo_pk):
         todo.delete()
         return redirect('currenttodos')
 
+#Rest API
 class ListTodos(generics.ListCreateAPIView):
     queryset = Todo.objects.all()
     serializer_class = TodoSerializer
