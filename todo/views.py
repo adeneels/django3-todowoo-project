@@ -5,8 +5,12 @@ from django.db import IntegrityError
 from django.contrib.auth import login, logout, authenticate
 from .forms import TodoForm
 from .models import Todo
+from .serializers import TodoSerializer
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
+
+from rest_framework import generics, permissions
+
 
 def home(request):
     return render(request, 'todo/home.html')
@@ -95,3 +99,11 @@ def deletetodo(request, todo_pk):
     if request.method == 'POST':
         todo.delete()
         return redirect('currenttodos')
+
+class ListTodos(generics.ListCreateAPIView):
+    queryset = Todo.objects.all()
+    serializer_class = TodoSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
